@@ -5,8 +5,7 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // any later version.
-/**
- * Privacy Subsystem implementation for mod_mooproof
+/*
  *
  * @package    mod_mooproof
  * @copyright  2025 Brian A. Pool

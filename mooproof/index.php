@@ -6,7 +6,6 @@
 // the Free Software Foundation, either version 3 of the License, or
 // any later version.
 /**
- * Privacy Subsystem implementation for mod_mooproof
  *
  * @package    mod_mooproof
  * @copyright  2025 Brian A. Pool
@@ -19,6 +18,12 @@ $id = required_param('id', PARAM_INT); // Course ID
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 require_course_login($course);
+
+// Trigger course_module_instance_list_viewed event.
+$event = \mod_mooproof\event\course_module_instance_list_viewed::create(array(
+    'context' => context_course::instance($course->id)
+));
+$event->trigger();
 
 $PAGE->set_url('/mod/mooproof/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));

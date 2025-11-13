@@ -79,6 +79,7 @@ $string['submitforproofing'] = 'Submit for Proofing';
 $string['proofingresults'] = 'Proofing Results';
 $string['submitanother'] = 'Submit Another Paper';
 $string['proofing'] = 'Proofing your paper, please wait...';
+$string['wordcount'] = 'Word count';
 // Chat feature
 $string['askquestions'] = 'Ask Questions About Your Feedback';
 $string['chatplaceholder'] = 'Ask a question about the feedback...';
@@ -90,7 +91,7 @@ $string['thinking'] = 'Thinking...';
 // Messages
 $string['intro'] = 'Introduction';
 $string['nomorproofs'] = 'There are no MooProof resources in this course';
-
+$string['missingidandcmid'] = 'You must specify a course_module ID or an instance ID';
 // Privacy
 $string['privacy:metadata:mooproof_usage'] = 'Information about user submissions to MooProof resources';
 $string['privacy:metadata:mooproof_usage:userid'] = 'The ID of the user';
@@ -119,3 +120,19 @@ $string['cannotreadfile'] = 'Cannot read the uploaded file';
 $string['cannotopendocx'] = 'Cannot open DOCX file - file may be corrupted';
 $string['invaliddocx'] = 'Invalid DOCX file format';
 $string['notextextracted'] = 'Could not extract text from {$a} file. The file may be empty, corrupted, or contain only images';
+// Events
+$string['eventcoursemoduleviewed'] = 'Course module viewed';
+$string['eventcoursemoduleinstancelistviewed'] = 'Course module instance list viewed';
+// JavaScript strings
+$string['error'] = 'Error';
+$string['unsupportedfiletype'] = 'Only .txt and .docx files are supported. Please convert your document to .docx format.';
+$string['selected'] = 'Selected:';
+$string['fileuploadedextract'] = 'File uploaded - text will be extracted on server';
+$string['pleaseentertext'] = 'Please enter some text to proof.';
+$string['pleaseselectfile'] = 'Please select a file to upload.';
+$string['wordlimitexceededtitle'] = 'Word Limit Exceeded';
+$string['failedconnectproofing'] = 'Failed to connect to proofing service';
+$string['limitreached'] = 'Limit Reached';
+$string['maxquestionsreached'] = 'You have reached the maximum number of questions for this submission.';
+$string['failedconnectchat'] = 'Failed to connect to chat service';
+$string['questionsremaining'] = 'Questions remaining: {$a}';
