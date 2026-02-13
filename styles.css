@@ -1,0 +1,287 @@
+/* This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// any later version.
+/**
+ *
+ * @package    mod_mooproof
+ * @copyright  2025 Brian A. Pool
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+/* MooProof Styles */
+
+.mooproof-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.mooproof-input-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.mooproof-input-section h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.mooproof-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+.mooproof-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.mooproof-tab:hover {
+    color: #333;
+}
+
+.mooproof-tab.active {
+    color: #0f6cbf;
+    border-bottom-color: #0f6cbf;
+    font-weight: bold;
+}
+
+.mooproof-tab-content {
+    display: none;
+}
+
+.mooproof-tab-content.active {
+    display: block;
+}
+
+.mooproof-textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 300px;
+}
+
+.mooproof-textarea:focus {
+    outline: none;
+    border-color: #0f6cbf;
+    box-shadow: 0 0 0 2px rgba(15, 108, 191, 0.1);
+}
+
+.mooproof-word-count {
+    text-align: right;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.mooproof-upload-area {
+    text-align: center;
+    padding: 40px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.mooproof-upload-area p {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+#mooproof-file-name {
+    margin-top: 15px;
+    color: #333;
+    font-size: 14px;
+}
+
+.mooproof-submit-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.mooproof-results-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.mooproof-results-section h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #0f6cbf;
+    padding-bottom: 10px;
+}
+
+.mooproof-results {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    border-left: 4px solid #0f6cbf;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.mooproof-results p {
+    margin-bottom: 15px;
+}
+
+.mooproof-results strong {
+    color: #0f6cbf;
+}
+
+#mooproof-loading-indicator {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.mooproof-loading {
+    display: inline-block;
+}
+
+.mooproof-loading p {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #666;
+}
+
+.mooproof-spinner-border {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    vertical-align: text-bottom;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: mooproof-spinner-border 0.75s linear infinite;
+}
+
+@keyframes mooproof-spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mooproof-container {
+        padding: 10px;
+    }
+    
+    .mooproof-input-section,
+    .mooproof-results-section {
+        padding: 15px;
+    }
+    
+    .mooproof-textarea {
+        min-height: 200px;
+    }
+    
+    .mooproof-chat-message {
+        max-width: 90%;
+    }
+}
+
+/* Chat Interface Styles */
+.mooproof-chat-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+}
+
+.mooproof-chat-section h4 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.mooproof-chat-messages {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.mooproof-chat-message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    max-width: 80%;
+    line-height: 1.6;
+}
+
+.mooproof-chat-user {
+    background: #0f6cbf;
+    color: white;
+    margin-left: auto;
+    text-align: right;
+}
+
+.mooproof-chat-assistant {
+    background: white;
+    border: 1px solid #ddd;
+    margin-right: auto;
+}
+
+.mooproof-chat-assistant em {
+    color: #666;
+}
+
+.mooproof-chat-input-area {
+    margin-bottom: 15px;
+}
+
+.mooproof-chat-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 50px;
+}
+
+.mooproof-chat-input:focus {
+    outline: none;
+    border-color: #0f6cbf;
+    box-shadow: 0 0 0 2px rgba(15, 108, 191, 0.1);
+}
+
+.mooproof-chat-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.mooproof-chat-remaining {
+    color: #666;
+    font-size: 14px;
+}
+
+.mooproof-chat-warning {
+    margin-top: 15px;
+    margin-bottom: 0;
+    font-size: 13px;
+}
