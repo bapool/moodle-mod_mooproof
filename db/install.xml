@@ -13,11 +13,13 @@
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Intro format"/>
         <FIELD NAME="gradelevel" TYPE="char" LENGTH="2" NOTNULL="true" DEFAULT="9" SEQUENCE="false" COMMENT="Grade level for proofing (3-12)"/>
         <FIELD NAME="proofinstructions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom proofing instructions"/>
+        <FIELD NAME="proofinstructionsformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Format of proofing instructions (Moodle text format)"/>
         <FIELD NAME="ratelimit_enable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable rate limiting"/>
         <FIELD NAME="ratelimit_period" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="day" SEQUENCE="false" COMMENT="Rate limit period (hour/day)"/>
         <FIELD NAME="ratelimit_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="5" SEQUENCE="false" COMMENT="Max submissions per period"/>
         <FIELD NAME="maxwords" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="5000" SEQUENCE="false" COMMENT="Maximum words allowed"/>
         <FIELD NAME="chatmessagelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false" COMMENT="Maximum chat messages per submission"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Completion requires paper submission"/>
         <FIELD NAME="temperature" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="0.5" SEQUENCE="false" COMMENT="AI temperature"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time created"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time modified"/>
@@ -66,5 +68,25 @@
         <INDEX NAME="mooproofid-userid" UNIQUE="false" FIELDS="mooproofid, userid"/>
       </INDEXES>
     </TABLE>
-  </TABLES>
+    <TABLE NAME="mooproof_chat_messages" COMMENT="Stores student chat messages and AI replies for each submission">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="MooProof submission ID"/>
+        <FIELD NAME="mooproofid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="MooProof resource ID"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
+        <FIELD NAME="role" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Message role: user or assistant"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Message content"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time message was created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="submissionid" TYPE="foreign" FIELDS="submissionid" REFTABLE="mooproof_submissions" REFFIELDS="id"/>
+        <KEY NAME="mooproofid" TYPE="foreign" FIELDS="mooproofid" REFTABLE="mooproof" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="submissionid-userid" UNIQUE="false" FIELDS="submissionid, userid"/>
+      </INDEXES>
+    </TABLE>
+    </TABLES>
 </XMLDB>

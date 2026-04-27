@@ -8,7 +8,7 @@
 /*
  *
  * @package    mod_mooproof
- * @copyright  2025 Brian A. Pool
+ * @copyright  2026 Brian A. Pool
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -57,13 +57,13 @@ class mod_mooproof_mod_form extends moodleform_mod {
         $mform->addHelpButton('gradelevel', 'gradelevel', 'mooproof');
         $mform->setDefault('gradelevel', '9');
 
-        // Proofing Instructions
-        $mform->addElement('textarea', 'proofinstructions', 
+        // Proofing Instructions (editor with fullscreen support)
+        $mform->addElement('editor', 'proofinstructions_editor',
                           get_string('proofinstructions', 'mooproof'),
-                          array('rows' => 5, 'cols' => 60));
-        $mform->setType('proofinstructions', PARAM_TEXT);
-        $mform->addHelpButton('proofinstructions', 'proofinstructions', 'mooproof');
-        $mform->setDefault('proofinstructions', get_string('defaultinstructions', 'mooproof'));
+                          array('rows' => 10),
+                          array('maxfiles' => 0, 'noclean' => false, 'trusttext' => false));
+        $mform->setType('proofinstructions_editor', PARAM_RAW);
+        $mform->addHelpButton('proofinstructions_editor', 'proofinstructions', 'mooproof');
 
         // Rate Limiting Header
         $mform->addElement('header', 'ratelimitheader', get_string('ratelimiting', 'mooproof'));
@@ -124,10 +124,49 @@ class mod_mooproof_mod_form extends moodleform_mod {
         $mform->setDefault('temperature', '0.5');
         $mform->addHelpButton('temperature', 'temperature', 'mooproof');
 
+        // Completion settings
+        $this->add_completion_rules();
+        
         // Standard coursemodule elements
         $this->standard_coursemodule_elements();
 
         // Buttons
         $this->add_action_buttons();
+    }
+
+    /**
+     * Pre-process form data to load proofinstructions into the editor element.
+     *
+     * @param array $defaultvalues
+     */
+    function data_preprocessing(&$defaultvalues) {
+        if (isset($defaultvalues['proofinstructions'])) {
+            $defaultvalues['proofinstructions_editor']['text']   = $defaultvalues['proofinstructions'];
+            $defaultvalues['proofinstructions_editor']['format'] = isset($defaultvalues['proofinstructionsformat'])
+                ? $defaultvalues['proofinstructionsformat']
+                : FORMAT_HTML;
+        } else {
+            $defaultvalues['proofinstructions_editor']['text']   = get_string('defaultinstructions', 'mooproof');
+            $defaultvalues['proofinstructions_editor']['format'] = FORMAT_HTML;
+        }
+    }
+    
+    /**
+     * Add completion rules for this module
+     *
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+        $suffix = $this->get_suffix();
+        $completionsubmitel = 'completionsubmit' . $suffix;
+        $mform->addElement('advcheckbox', $completionsubmitel, '', get_string('completionsubmit', 'mooproof'));
+        $mform->setDefault($completionsubmitel, 0);
+        return [$completionsubmitel];
+    }
+
+    public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
     }
 }

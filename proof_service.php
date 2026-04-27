@@ -66,7 +66,9 @@ if (!empty($filename)) {
 
 // Get mooproof instance
 $mooproof = $DB->get_record('mooproof', array('id' => $mooproofid), '*', MUST_EXIST);
+$course = get_course($mooproof->course);
 $cm = get_coursemodule_from_instance('mooproof', $mooproofid, $mooproof->course, false, MUST_EXIST);
+$cm = cm_info::create($cm);
 $context = context_module::instance($cm->id);
 
 // Check capability
@@ -135,7 +137,7 @@ if ($maxwords > 0 && $wordcount > $maxwords) {
 // Build the proofing prompt
 $gradelevel = $mooproof->gradelevel;
 $instructions = !empty($mooproof->proofinstructions) ? 
-    $mooproof->proofinstructions : 
+    strip_tags($mooproof->proofinstructions) : 
     get_string('defaultinstructions', 'mooproof');
 
 // Replace {gradelevel} placeholder in instructions
@@ -171,7 +173,14 @@ try {
         $submission->wordcount = $wordcount;
         $submission->gradelevel = $gradelevel;
         $submission->timecreated = time();
-        $DB->insert_record('mooproof_submissions', $submission);
+        $submissionid = $DB->insert_record('mooproof_submissions', $submission);
+        $submissionid = $DB->insert_record('mooproof_submissions', $submission);
+        
+        // Update activity completion
+        if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            $completion = new \completion_info($course);
+            $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
+        }
         
         // Update usage counter if rate limiting is enabled
         if ($ratelimit_enabled && isset($usage)) {
@@ -189,7 +198,8 @@ try {
             'success' => true,
             'feedback' => trim($feedback),
             'remaining' => $remaining,
-            'wordcount' => $wordcount
+            'wordcount' => $wordcount,
+            'submissionid' => $submissionid
         ));
     } else {
         // Return error from AI system

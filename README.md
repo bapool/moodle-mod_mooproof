@@ -14,6 +14,7 @@ MooProof provides grade-appropriate feedback on student papers without rewriting
 - **Interactive Chat**: Students ask questions about feedback they receive
 - **Rate Limiting**: Control submission frequency (per hour or per day)
 - **Word Limits**: Set maximum word counts per submission
+- **Activity Completion**: Automatically mark complete when a student submits a paper
 - **Session-Based Chat**: Temporary Q&A to encourage independent learning
 - **Submission Tracking**: Monitor student usage and submissions
 - **Privacy Compliant**: Full GDPR support with Privacy API
@@ -21,7 +22,7 @@ MooProof provides grade-appropriate feedback on student papers without rewriting
 
 ## Requirements
 
-- **Moodle**: 4.0 or higher (tested on 4.5.7)
+- **Moodle**: 4.5 or higher (tested on 4.5.11)
 - **PHP**: 8.0 or higher
 - **Moodle AI Subsystem**: Must be configured with an AI provider
 - **AI Provider**: One of the following:
@@ -78,6 +79,7 @@ MooProof provides grade-appropriate feedback on student papers without rewriting
    - **Rate Limiting**: Set submission limits (optional)
    - **Chat Message Limit**: Set Q&A question limits (default: 10)
    - **Maximum Words**: Set word count limit (default: 5000)
+   - **Completion**: Enable "Require submission" to mark complete when student submits
 
 #### Customizing Proofing Instructions
 
@@ -153,6 +155,7 @@ After receiving feedback:
 | Chat Message Limit | Max questions per submission | 10 |
 | Maximum Words | Max word count | 5000 |
 | Temperature | AI creativity (0.3-0.7) | 0.5 |
+| Require Submission | Mark complete when student submits a paper | Disabled |
 
 ### Default Instructions
 ```
@@ -162,13 +165,28 @@ and clarity. Do not rewrite the paper - instead, point out areas that need
 improvement and explain why.
 ```
 
+## Activity Completion
+
+MooProof supports Moodle's activity completion system with a custom rule:
+
+- **Require submission**: When enabled, the activity is automatically marked complete the first time a student successfully submits a paper for proofreading.
+
+To enable this:
+1. Edit the MooProof activity settings
+2. Expand the **Completion** section
+3. Set **Completion tracking** to "Show activity as complete when conditions are met"
+4. Check **Require submission**
+
+This integrates with course completion, activity completion reports, and any other Moodle feature that relies on completion tracking.
+
 ## Database Tables
 
-MooProof creates three database tables:
+MooProof creates four database tables:
 
 - **mdl_mooproof**: Main resource instances
 - **mdl_mooproof_usage**: Rate limiting tracking
 - **mdl_mooproof_submissions**: Submission history and feedback
+- **mdl_mooproof_chat_messages**: Per-submission chat conversation history
 
 ## Privacy
 
@@ -184,6 +202,7 @@ MooProof is fully GDPR compliant:
 
 - Paper text (for proofing)
 - AI-generated feedback
+- Chat conversation history per submission
 - Submission timestamps
 - Usage statistics (for rate limiting)
 - Submissions are automatically deleted after 60 days.
@@ -206,7 +225,7 @@ Via Moodle's AI subsystem:
 - **Component**: mod_mooproof
 - **Frankenstyle**: mooproof
 - **Maturity**: BETA
-- **Version**: 1.1 (2025110401)
+- **Version**: 1.5.3 (2026042702)
 
 ### APIs Implemented
 
@@ -215,6 +234,7 @@ Via Moodle's AI subsystem:
 - ✅ Settings API
 - ✅ Capabilities API
 - ✅ Language API
+- ✅ Activity Completion API (custom rules)
 
 ### Supported Features
 
@@ -222,30 +242,34 @@ Via Moodle's AI subsystem:
 - Backup and restore
 - Privacy API (data export/deletion)
 - Resource archetype
-- Activity completion (basic)
+- Activity completion with custom rule (requires paper submission)
 
 ### File Structure
 ```
 mooproof/
-├── amd/                    # JavaScript (AMD format)
-│   ├── build/             # Compiled JS
-│   └── src/               # Source JS
-├── backup/                # Backup and restore
-│   └── moodle2/          # Moodle 2.x format
-├── classes/               # Auto-loaded classes
-│   └── privacy/          # Privacy API
-├── db/                    # Database definitions
-├── lang/                  # Language strings
-│   └── en/               # English (required)
-├── pix/                   # Icons
-├── chat_service.php      # Chat AJAX handler
-├── index.php             # Course listing
-├── lib.php               # Core functions
-├── mod_form.php          # Settings form
-├── proof_service.php     # Proofing AJAX handler
-├── styles.css            # CSS styles
-├── version.php           # Version info
-└── view.php              # Main view
+├── amd/                          # JavaScript (AMD format)
+│   ├── build/                   # Compiled JS
+│   └── src/                     # Source JS
+├── backup/                       # Backup and restore
+│   └── moodle2/                 # Moodle 2.x format
+├── classes/                      # Auto-loaded classes
+│   ├── completion/              # Activity completion
+│   ├── event/                   # Event logging
+│   ├── external/                # External services (AJAX)
+│   ├── output/                  # Renderer and renderables
+│   ├── privacy/                 # Privacy API
+│   └── task/                    # Scheduled tasks
+├── db/                           # Database definitions
+├── lang/                         # Language strings
+│   └── en/                      # English (required)
+├── pix/                          # Icons
+├── templates/                    # Mustache templates
+├── index.php                    # Course listing
+├── lib.php                      # Core functions
+├── mod_form.php                 # Settings form
+├── styles.css                   # CSS styles
+├── version.php                  # Version info
+└── view.php                     # Main view
 ```
 
 ## Troubleshooting
@@ -260,6 +284,16 @@ mooproof/
 3. Test AI provider with Moodle's test tool
 4. Check error logs for specific error messages
 
+### Activity Completion Not Triggering
+
+**Problem**: Activity not marked complete after student submits a paper
+
+**Solutions**:
+1. Verify completion tracking is enabled site-wide: Site admin → Advanced features → Enable completion tracking
+2. Edit the MooProof activity and confirm "Require submission" is checked under Completion
+3. Confirm the student actually received AI feedback (submission must succeed, not fail due to rate limit or word count)
+4. Check that the student is not already marked complete from a prior submission
+
 ### Chat Not Working
 
 **Problem**: Chat interface doesn't appear or shows "NaN"
@@ -268,7 +302,6 @@ mooproof/
 1. Purge all caches: Site admin → Development → Purge all caches
 2. Hard refresh browser (Ctrl+F5)
 3. Check JavaScript console for errors (F12)
-4. Verify chat_service.php exists and is readable
 
 ### File Upload Issues
 
@@ -308,7 +341,7 @@ Contributions are welcome! Areas for improvement:
 
 ## License
 
-Copyright © 2025 Brian A. Pool
+Copyright © 2026 Brian A. Pool
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -330,6 +363,28 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 - **Based on**: MooChat activity module concept
 
 ## Changelog
+
+### Version 1.5.3 (2026-04-27)
+
+- Fixed activity completion — the "Require submission" rule now correctly marks the activity complete when a student submits a paper
+
+### Version 1.5 (2026-01-28)
+
+- Added teacher submission history tab with per-student detail view
+- Added persistent chat history saved to database per submission
+- Proofing Instructions field upgraded to Moodle rich text editor
+
+### Version 1.4 (2025-11-13)
+
+- Migrated view.php to Mustache templates and Output API
+- Migrated AJAX to External Services API
+- Added proper Moodle event logging
+- Namespaced all CSS selectors
+- Bug fixes and code quality improvements
+
+### Version 1.2 (2025-11-05)
+
+- Added 60-day automatic submission cleanup scheduled task
 
 ### Version 1.1 (2025-11-04)
 
@@ -355,9 +410,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ### Planned Features
 
-- [ ] Save chat history (optional setting)
 - [ ] Export chat transcripts
-- [ ] Teacher dashboard for viewing submissions
 - [ ] Submission analytics and reports
 - [ ] Integration with Moodle gradebook
 - [ ] Mobile app support

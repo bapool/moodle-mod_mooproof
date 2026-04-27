@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-04-27
+
+### Fixed
+- Activity completion now triggers correctly when a student submits a paper for proofreading
+  - `submit_paper.php` now calls `completion_info::update_state()` after a successful submission is saved
+  - The completion trigger respects the teacher-configured "Require submission" checkbox in activity settings
+  - Previously, the `completionsubmit` rule and `custom_completion.php` class were in place but were never called at submission time
+
+## [1.5] - 2026-01-28
+
+### Added
+- **Teacher submission history tab** — Teachers and managers now see a "Student Submissions"
+  tab on every MooProof activity page
+  - Lists all students who have submitted, with submission count, last submission date, and a View Details link
+  - Detail view groups submissions by date with expand/collapse accordions
+  - Each submission shows: submitted paper text, AI feedback, and the full follow-up chat conversation
+  - New `mooproof_chat_messages` database table persists all student ↔ AI chat turns per submission
+  - New `mod/mooproof:viewhistory` capability (teachers, editing teachers, managers)
+
+### Changed
+- Proofing Instructions field now uses the Moodle editor (TinyMCE/Atto) instead of a plain textarea
+  - Supports fullscreen editing mode for easier prompt authoring
+  - Stores format alongside text (proofinstructionsformat DB column added)
+  - HTML tags are stripped before instructions are sent to the AI service
+
 ## [1.4] - 2025-11-13
 
 ### Changed
@@ -18,31 +43,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-  - Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
 - Replaced deprecated `print_error()` function with `moodle_exception` in view.php
 - Added missing 'missingidandcmid' language string
 - Removed hardcoded language strings from JavaScript (proof.js)
   - All user-facing strings now use get_string() via Moodle's string API
   - Strings properly passed from PHP to JavaScript using strings_for_js()
-  - Resolved Moodle Plugin Contribution Checklist requirement for proper string handling
 - Migrated AJAX implementation to External Services API
   - Replaced direct PHP endpoints (proof_service.php, chat_service.php) with external services
   - Created mod_mooproof_submit_paper external service class
   - Created mod_mooproof_send_chat_message external service class
   - Updated JavaScript to use Moodle's Ajax API (core/ajax)
   - Improved security with automatic parameter validation and capability checks
-  - Resolved Moodle Plugin Contribution Checklist requirement for external services
 
 ### Added
 - Implemented proper Moodle event logging for module access tracking
   - Added `course_module_viewed` event class
   - Added `course_module_instance_list_viewed` event class
   - Event triggers in view.php and index.php for proper activity access logging
-  - Added event language strings
 - Added db/services.php to register external web services
 - Added templates directory with Mustache template files
 - Added output classes for renderer pattern implementation
@@ -50,106 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Notes
 - All changes comply with Moodle Plugin Contribution Checklist requirements
-- Plugin is now ready for submission to moodle.org
 - No database schema changes required
 - Backward compatible with existing MooProof installations
-
-## [1.3] - 2025-11-13
-
-### Fixed
-- Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-  - Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
-- Replaced deprecated `print_error()` function with `moodle_exception` in view.php
-- Added missing 'missingidandcmid' language string
-- Removed hardcoded language strings from JavaScript (proof.js)
-  - All user-facing strings now use get_string() via Moodle's string API
-  - Strings properly passed from PHP to JavaScript using strings_for_js()
-  - Resolved Moodle Plugin Contribution Checklist requirement for proper string handling
-- Migrated AJAX implementation to External Services API
-  - Replaced direct PHP endpoints (proof_service.php, chat_service.php) with external services
-  - Created mod_mooproof_submit_paper external service class
-  - Created mod_mooproof_send_chat_message external service class
-  - Updated JavaScript to use Moodle's Ajax API (core/ajax)
-  - Improved security with automatic parameter validation and capability checks
-  - Resolved Moodle Plugin Contribution Checklist requirement for external services
-
-### Added
-- Implemented proper Moodle event logging for module access tracking
-  - Added `course_module_viewed` event class
-  - Added `course_module_instance_list_viewed` event class
-  - Event triggers in view.php and index.php for proper activity access logging
-  - Added event language strings
-- Added db/services.php to register external web services
-
-### Fixed
-- Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-  - Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
-- Replaced deprecated `print_error()` function with `moodle_exception` in view.php
-- Added missing 'missingidandcmid' language string
-- Removed hardcoded language strings from JavaScript (proof.js)
-  - All user-facing strings now use get_string() via Moodle's string API
-  - Strings properly passed from PHP to JavaScript using strings_for_js()
-  - Resolved Moodle Plugin Contribution Checklist requirement for proper string handling
-
-### Added
-- Implemented proper Moodle event logging for module access tracking
-  - Added `course_module_viewed` event class
-  - Added `course_module_instance_list_viewed` event class
-  - Event triggers in view.php and index.php for proper activity access logging
-  - Added event language strings
-
-### Fixed
-- Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-  - Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
-- Replaced deprecated `print_error()` function with `moodle_exception` in view.php
-- Added missing 'missingidandcmid' language string
-
-### Added
-- Implemented proper Moodle event logging for module access tracking
-  - Added `course_module_viewed` event class
-  - Added `course_module_instance_list_viewed` event class
-  - Event triggers in view.php and index.php for proper activity access logging
-  - Added event language strings
-
-### Fixed
-- Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-  - Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
-- Replaced deprecated `print_error()` function with `moodle_exception` in view.php
-- Added missing 'missingidandcmid' language string
-
-### Fixed
-- Namespaced all CSS selectors to prevent conflicts with other plugins and Moodle core
-  - Changed `#file-name` to `#mooproof-file-name`
-  - Changed `#loading-indicator` to `#mooproof-loading-indicator`
-  - Changed `.spinner-border` to `.mooproof-spinner-border`
-  - Updated corresponding JavaScript and HTML templates
-- Resolved Moodle Plugin Contribution Checklist requirement for properly namespaced CSS selectors
-
-## [Unreleased]
-
-### Planned
-- Mobile app support
-- Save chat history (optional setting)
-- Export chat transcripts
-- Teacher dashboard for viewing submissions
-- Integration with Moodle gradebook
-- Additional file format support (ODT, RTF)
 
 ## [1.2] - 2025-11-05
 
@@ -228,11 +147,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **1.5.3 (2026-04-27)**: Fixed activity completion triggering on paper submission
+- **1.5 (2026-01-28)**: Added teacher submission history tab and persistent chat history
+- **1.4 (2025-11-13)**: Migrated to Mustache templates and External Services API
 - **1.2 (2025-11-05)**: Added 60-day automatic cleanup
 - **1.1 (2025-11-04)**: Added chat feature, Privacy API, Backup/Restore
 - **1.0 (2025-11-03)**: Initial release with core proofreading features
 
 ## Migration Notes
+
+### From 1.5 to 1.5.3
+- No database changes
+- No action required from administrators
+- Existing completion data is unaffected
 
 ### From 1.1 to 1.2
 - No database changes
@@ -247,16 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Known Issues
 
-### Version 1.2
+### Version 1.5.3
 - None currently
-
-### Version 1.1
-- Chat history is not saved (by design - session-based only)
-- Chat messages cannot be exported
-- Teachers cannot view student chat sessions
-
-### Version 1.0
-- No interactive follow-up questions (resolved in 1.1)
 
 ## Support
 
@@ -270,7 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Based On**: MooChat activity module concept
 
-**AI Providers**: 
+**AI Providers**:
 - Supports any AI provider compatible with Moodle's AI subsystem
 - Tested with OpenAI, Anthropic Claude, and Azure OpenAI
 

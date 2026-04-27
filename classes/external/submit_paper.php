@@ -206,6 +206,12 @@ class submit_paper extends external_api {
                 $submission->timecreated = time();
                 $DB->insert_record('mooproof_submissions', $submission);
 
+                // Trigger completion if the "require submission" rule is enabled.
+                $completion = new \completion_info($DB->get_record('course', ['id' => $mooproof->course], '*', MUST_EXIST));
+                if ($completion->is_enabled($cm) && !empty($mooproof->completionsubmit)) {
+                    $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
+                }
+
                 // Update usage counter.
                 if ($mooproof->ratelimit_enable && isset($usage)) {
                     $usage->submissioncount++;
