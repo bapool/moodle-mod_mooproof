@@ -8,7 +8,7 @@
 /**
  *
  * @package
- * @copyright  2025 Brian A. Pool
+ * @copyright  2026 Brian A. Pool
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -23,6 +23,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
             // Chat variables
             var currentPaper = null;
             var currentFeedback = null;
+            var currentSubmissionId = null;
             var chatHistory = [];
             var chatMessageCount = 0;
 
@@ -188,6 +189,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                         // Store paper and feedback for chat
                         currentPaper = papertext;
                         currentFeedback = response.feedback;
+                        currentSubmissionId = response.submissionid || null;
                         chatHistory = [];
                         chatMessageCount = 0;
 
@@ -364,6 +366,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                     methodname: 'mod_mooproof_send_chat_message',
                     args: {
                         mooproofid: mooproofid,
+                        submissionid: currentSubmissionId || 0,
                         message: message,
                         papertext: currentPaper,
                         feedback: currentFeedback,
